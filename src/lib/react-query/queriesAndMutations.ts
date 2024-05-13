@@ -159,15 +159,21 @@ export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
         queryFn: getInfinitePosts,
+        initialPageParam: 1,
         getNextPageParam: (lastPage) => {
-            if(lastPage && lastPage.documents.length > 0){
-                return lastPage?.documents[lastPage?.documents.length - 1].$id
+            if (lastPage?.documents.length === 0) {
+                return null;
             }
 
-            return undefined
+            const lastId = lastPage?.documents[lastPage.documents.length - 1].$id
+
+            return Number(lastId)
         }
-    })
-}
+
+    });
+};
+
+  
 
 export const useSearchPost = (searchTerm: string) => {
     return useQuery({
