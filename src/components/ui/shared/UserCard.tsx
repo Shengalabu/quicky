@@ -1,6 +1,6 @@
 import { Models } from "appwrite";
 import { Link } from "react-router-dom";
-import { Button } from "../button";
+import FollowButton from "./FollowButton";
 
 
 type UserCardProps = {
@@ -25,9 +25,7 @@ const UserCard = ({ user }: UserCardProps) => {
         </p>
       </div>
 
-      <Button type="button" size="sm" className="shad-button_primary px-5">
-        Follow
-      </Button>
+      <FollowButton toFollowUserData = {user} canBePressed = {false}/>
     </Link>
   );
 };

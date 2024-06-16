@@ -218,6 +218,44 @@ export async function likePost(postId: string, likesArray: string[]) {
    }
 }
 
+export async function setFollowingData(followingId: string, followerFollowingList: string[]) {
+   try {
+      const updatedFollowingUser = await databases.updateDocument(
+         appwriteConfig.databaseId,
+         appwriteConfig.userCollectionId,
+         followingId,
+         {
+            followers: followerFollowingList
+         }
+      )
+
+      if(!updatedFollowingUser) throw Error
+      
+      return updatedFollowingUser
+   } catch (error) {
+      console.log(error)
+   }
+}
+
+export async function setFollowerData(followerId: string, followerFollowingList: string[]) {
+   try {
+      const updatedFollowingUser = await databases.updateDocument(
+         appwriteConfig.databaseId,
+         appwriteConfig.userCollectionId,
+         followerId,
+         {
+            following: followerFollowingList
+         }
+      )
+
+      if(!updatedFollowingUser) throw Error
+      
+      return updatedFollowingUser
+   } catch (error) {
+      console.log(error)
+   }
+}
+
 export async function savePost(postId: string, userId: string) {
    try {
       const updatedPost = await databases.createDocument(
@@ -498,3 +536,4 @@ export async function updateUser(user: IUpdateUser) {
      console.log(error);
    }
  }
+
