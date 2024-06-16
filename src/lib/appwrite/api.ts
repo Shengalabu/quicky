@@ -2,6 +2,7 @@ import { ID, Query } from "appwrite"
 import { account, appwriteConfig, avatars, databases, storage } from "./config"
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types"
 import { ImageGravity } from "appwrite"
+import { PassThrough } from "stream"
 
 export async function createUserAccount(user: INewUser){
  try {
@@ -213,6 +214,44 @@ export async function likePost(postId: string, likesArray: string[]) {
       if(!updatedPost) throw Error
       
       return updatedPost
+   } catch (error) {
+      console.log(error)
+   }
+}
+
+export async function setFollowingData(followingId: string, followerFollowingList: string[]) {
+   try {
+      const updatedFollowingUser = await databases.updateDocument(
+         appwriteConfig.databaseId,
+         appwriteConfig.userCollectionId,
+         followingId,
+         {
+            followers: followerFollowingList
+         }
+      )
+
+      if(!updatedFollowingUser) throw Error
+      
+      return updatedFollowingUser
+   } catch (error) {
+      console.log(error)
+   }
+}
+
+export async function setFollowerData(followerId: string, followerFollowingList: string[]) {
+   try {
+      const updatedFollowingUser = await databases.updateDocument(
+         appwriteConfig.databaseId,
+         appwriteConfig.userCollectionId,
+         followerId,
+         {
+            following: followerFollowingList
+         }
+      )
+
+      if(!updatedFollowingUser) throw Error
+      
+      return updatedFollowingUser
    } catch (error) {
       console.log(error)
    }
@@ -498,3 +537,4 @@ export async function updateUser(user: IUpdateUser) {
      console.log(error);
    }
  }
+

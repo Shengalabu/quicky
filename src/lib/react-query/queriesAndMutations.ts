@@ -4,7 +4,7 @@ import {
     useQueryClient,
     useInfiniteQuery,
 } from '@tanstack/react-query'
-import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostId, getRecentPosts, getUserById, getUserPosts, getUsers, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
+import { createPost, createUserAccount, deletePost, deleteSavedPost, getCurrentUser, getInfinitePosts, getPostId, getRecentPosts, getUserById, getUserPosts, getUsers, likePost, savePost, searchPosts, setFollowerData, setFollowingData, signInAccount, signOutAccount, updatePost, updateUser } from '../appwrite/api'
 import { INewPost, INewUser, IUpdatePost, IUpdateUser } from '@/types'
 import { QUERY_KEYS } from './queryKeys'
 
@@ -220,3 +220,45 @@ export const useUpdateUser = () => {
       },
     });
   };
+
+  export const useSetToFollowingList = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: ({ toFollowId, toFollowFollowerList, }: 
+                     { toFollowId: string; toFollowFollowerList: string[]}) => 
+                        setFollowingData(toFollowId, toFollowFollowerList),
+            onSuccess: (data) => {
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+                })
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.GET_CURRENT_USER]
+                })
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id],
+                });
+            }
+        })
+}
+
+export const useSetFollowerList = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: ({ followerId, followerFollowingList, }: 
+                     { followerId: string; followerFollowingList: string[]}) => 
+                        setFollowerData(followerId, followerFollowingList),
+            onSuccess: (data) => {
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.$id]
+                })
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.GET_RECENT_POSTS]
+                })
+                queryClient.invalidateQueries({
+                    queryKey: [QUERY_KEYS.GET_CURRENT_USER]
+                })
+            }
+        })
+}
